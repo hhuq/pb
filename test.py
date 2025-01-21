@@ -16,11 +16,11 @@ if __name__ == '__main__':
     communities = static_community_detection(snapshots, "data/communities.pkl")
     social_positions = social_position_score(snapshots, "data/social_positions.pkl")
     meta_community_network = meta_community_network_generation(
-        communities, social_positions, 0.5, 0.5, "data/meta_community_network.pkl"
+        communities, social_positions, 0.5, 0.5
     )
-    features = feature_extraction(snapshots, communities, social_positions, "data/features.pkl")
+    features = feature_extraction(snapshots, communities, social_positions)
     # samples = generate_samples(meta_community_network, features, False, relative=False)
-    samples = generate_samples(meta_community_network, features, False, "data/samples.pkl")
+    samples = generate_samples(meta_community_network, features, False)
 
     explainer = train_prediction_model(samples["train_X"], samples["train_Y"])
     # explainer = train_prediction_model(samples["train_X"], samples["train_Y"], pkl="data/explainer.pkl")
