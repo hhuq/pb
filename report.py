@@ -88,19 +88,27 @@ def evolution_event_distribution_report(timestamps, meta_community_network):
     bar_data = {}
     for node in meta_community_network.nodes():
         sid, _ = extract_ids(node)
-        pre_event = meta_community_network.nodes[node]['pre']
+        # 用 len(timestamps) 保证索引不会超出范围
+        sid = sid % len(timestamps)  # 保证 sid 在 timestamps 范围内
+
+        pre_event = meta_community_network.nodes[node].get('pre')
         if pre_event != "None":
-            bar_data[timestamps[sid-1]] = bar_data.get(timestamps[sid-1], [])
-            bar_data[timestamps[sid-1]].append(pre_event)
-        nex_event = meta_community_network.nodes[node]['nex']
+            bar_data[timestamps[sid - 1]] = bar_data.get(timestamps[sid - 1], [])
+            bar_data[timestamps[sid - 1]].append(pre_event)
+        
+        nex_event = meta_community_network.nodes[node].get('nex')
         if nex_event != "None":
             bar_data[timestamps[sid]] = bar_data.get(timestamps[sid], [])
             bar_data[timestamps[sid]].append(nex_event)
+    
     data = []
     ne_count = ["#forming", "#continuing", "#growing", "#shrinking", "#splitting", "#merging", "#dissolving"]
+    
+    # 确保对所有的 timestamps 进行遍历
     for timestamp in timestamps[:-1]:
-        counter = Counter(bar_data[timestamp])
+        counter = Counter(bar_data.get(timestamp, []))
         data.append(go.Bar(name=timestamp, x=ne_count, y=[counter.get(ne[1:], 0) for ne in ne_count]))
+
     fig = go.Figure(data=data)
     fig.update_layout(barmode="group")
     fig.write_html("figure/evolution_event_distribution.html")

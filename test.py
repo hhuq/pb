@@ -21,8 +21,10 @@ if __name__ == '__main__':
     features = feature_extraction(snapshots, communities, social_positions, "data/features.pkl")
     # samples = generate_samples(meta_community_network, features, False, relative=False)
     samples = generate_samples(meta_community_network, features, False, "data/samples.pkl")
-    # explainer = train_prediction_model(samples["train_X"], samples["train_Y"])
-    explainer = train_prediction_model(samples["train_X"], samples["train_Y"], pkl="data/explainer.pkl")
+
+    explainer = train_prediction_model(samples["train_X"], samples["train_Y"])
+    # explainer = train_prediction_model(samples["train_X"], samples["train_Y"], pkl="data/explainer.pkl")
+
     # Historical Information report
     shape_values = explainer.shap_values(np.array(samples["train_X"]))
     class_names = ["continuing", "growing", "shrinking", "splitting", "merging", "dissolving"]
