@@ -9,28 +9,28 @@ from model_operations import generate_samples, train_prediction_model
 from report import evolution_event_distribution_report
 
 if __name__ == '__main__':
-    nodes = [json.loads(node)["data"] for node in open("data_pb/pb_nodes.json", encoding="utf8").readlines()]
-    edges = [json.loads(edge)["data"] for edge in open("data_pb/pb_edges.json", encoding="utf8").readlines()]
+    nodes = [json.loads(node)["data"] for node in open("data/nodes.json", encoding="utf8").readlines()]
+    edges = [json.loads(edge)["data"] for edge in open("data/edges.json", encoding="utf8").readlines()]
     end_time = dt.strptime("2016-08-01", "%Y-%m-%d")
     # 划分快照
-    # snapshots = generate_snapshots(end_time, 30, edges, nodes, "data_pb/pb_snapshots.pkl")
+    # snapshots = generate_snapshots(end_time, 30, edges, nodes, "data/snapshots.pkl")
     # programmableweb划分快照：
-    snapshots = generate_snapshots(end_time, 30, edges, nodes, "data_pb/pb_snapshots.pkl")
+    snapshots = generate_snapshots(end_time, 30, edges, nodes, "data/snapshots.pkl")
 
     # 社区特征
-    communities = static_community_detection(snapshots, "data_pb/pb_communities.pkl")
-    social_positions = social_position_score(snapshots, "data_pb/pb_social_positions.pkl")
+    communities = static_community_detection(snapshots, "data/communities.pkl")
+    social_positions = social_position_score(snapshots, "data/social_positions.pkl")
     meta_community_network = meta_community_network_generation(
-        communities, social_positions, 0.5, 0.5, "data_pb/pb_meta_community_network.pkl"
+        communities, social_positions, 0.5, 0.5, "data/meta_community_network.pkl"
     )
-    features = feature_extraction(snapshots, communities, social_positions, "data_pb/pb_features.pkl")
+    features = feature_extraction(snapshots, communities, social_positions, "data/features.pkl")
     # samples = generate_samples(meta_community_network, features, False, relative=False)
 
     # 模型训练，默认是随机森林
-    samples = generate_samples(meta_community_network, features, False, "data_pb/pb_samples.pkl")
+    samples = generate_samples(meta_community_network, features, False, "data/samples.pkl")
 
     explainer = train_prediction_model(samples["train_X"], samples["train_Y"])
-    # explainer = train_prediction_model(samples["train_X"], samples["train_Y"], pkl="data_pb/pb_explainer.pkl")
+    # explainer = train_prediction_model(samples["train_X"], samples["train_Y"], pkl="data/explainer.pkl")
 
 
     # Historical Information report
