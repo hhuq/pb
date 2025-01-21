@@ -1,10 +1,8 @@
 import pickle
 import mysql.connector
-from datetime import datetime as dt
 import networkx as nx
-
-from mysql_config import load_data_from_mysql
-
+from cdlib import algorithms
+from pb.mysql_config import load_data_from_mysql
 
 def generate_snapshots(edges_data, nodes_data, year):
     """
@@ -43,12 +41,17 @@ def generate_snapshots(edges_data, nodes_data, year):
     return snapshot
 
 
-def process_data():
+def process_data(pkl=None):
     """
-    处理数据并生成快照
+    处理数据并生成快照，或者从已有的 pkl 文件加载快照
     """
     snapshots = []  # 用于存储所有快照
     timestamps = []  # 用于存储对应的时间戳
+
+    if pkl is not None:
+        print(f"Loading snapshots from {pkl}")
+        snapshots_dict = pickle.load(open(pkl, "rb"))
+        return snapshots_dict  # 返回已加载的快照字典
 
     # 获取2005到2020年的边数据
     for year in range(2005, 2021):
@@ -70,9 +73,13 @@ def process_data():
     print(f"第一个快照的所有节点信息: {list(snapshots[0].nodes(data=True))}")
     print(f"第一个快照的所有边信息: {list(snapshots[0].edges(data=True))}")
 
-    # 保存为pkl文件
-    pickle.dump({"snapshots": snapshots, "timestamps": timestamps}, open("data/pb_snapshots.pkl", "wb"))
+    # 将快照和时间戳封装成字典并保存为 pkl 文件
+    snapshots_dict = {"snapshots": snapshots, "timestamps": timestamps}
+    pickle.dump(snapshots_dict, open("data/pb_snapshots.pkl", "wb"))
     print("pb_snapshots.pkl 已保存。")
 
+    return snapshots_dict  # 返回字典格式
+
+
 if __name__ == "__main__":
-    process_data()
+    process_data()  # 可以传入 pkl 文件路径，若为空，则生成新的快照数据

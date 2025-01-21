@@ -6,20 +6,26 @@ import numpy as np
 from community_operations import *
 from generate_snapshots import generate_snapshots
 from model_operations import generate_samples, train_prediction_model
+from pb.pb_snapshots import process_data
 from report import evolution_event_distribution_report
 
 if __name__ == '__main__':
-    nodes = [json.loads(node)["data"] for node in open("data/nodes.json", encoding="utf8").readlines()]
-    edges = [json.loads(edge)["data"] for edge in open("data/edges.json", encoding="utf8").readlines()]
+    nodes = [json.loads(node)["data"] for node in open("data_origin/nodes.json", encoding="utf8").readlines()]
+    edges = [json.loads(edge)["data"] for edge in open("data_origin/edges.json", encoding="utf8").readlines()]
     end_time = dt.strptime("2016-08-01", "%Y-%m-%d")
+
     # 划分快照
-    # snapshots = generate_snapshots(end_time, 30, edges, nodes, "data/snapshots.pkl")
+    snapshots_origin = generate_snapshots(end_time, 30, edges, nodes, "data_origin/snapshots.pkl")
+    print(type(snapshots_origin))
+
     # programmableweb划分快照：
-    snapshots = generate_snapshots(end_time, 30, edges, nodes, "data/snapshots.pkl")
+    snapshots = process_data(None)
+    print(type(snapshots))
+
 
     # 社区特征
-    communities = static_community_detection(snapshots, "data/communities.pkl")
-    social_positions = social_position_score(snapshots, "data/social_positions.pkl")
+    communities = static_community_detection(snapshots)
+    social_positions = social_position_score(snapshots)
     meta_community_network = meta_community_network_generation(
         communities, social_positions, 0.5, 0.5, "data/meta_community_network.pkl"
     )
