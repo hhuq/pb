@@ -1,0 +1,56 @@
+import networkx as nx
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from mysql_config import load_data_from_mysql, save_data_to_mysql
+
+
+def calculate_social_position(df):
+    """
+    计算给定网络的社会地位分数（PageRank）。
+
+    :param df: 包含['api1', 'api2', 'weight']列的DataFrame，表示网络的边。
+    :return: 包含['node', 'score']列的DataFrame，存储每个节点的PageRank分数。
+    """
+    # 创建加权无向图
+    G = nx.Graph()
+
+    # 添加边到图中，考虑权重
+    for _, row in df.iterrows():
+        G.add_edge(row['api1'], row['api2'], weight=row['weight'])
+
+    # 计算 PageRank 分数
+    page_rank_scores = nx.pagerank(G, alpha=0.85, weight="weight")
+
+    # 转换结果为 DataFrame 格式
+    result_df = pd.DataFrame(list(page_rank_scores.items()), columns=['node', 'score'])
+
+    # 保留四位小数
+    result_df['score'] = result_df['score'].round(4)
+
+    return result_df
+
+
+def social_position(df):
+    """
+    处理输入的网络数据并计算社会地位分数。
+
+    :param df: 输入的DataFrame，表示网络结构。
+    :return: 计算得到的PageRank分数DataFrame。
+    """
+    result_df = calculate_social_position(df)
+    return result_df
+
+
+def api_net_social_score():
+    """API网络中节点的社交分数(pagerank算法)"""
+    for year in range(2005, 2021):
+        print(f"\n============={year}=============")
+        df = load_data_from_mysql(f"api_net_{year}")
+        score_df = social_position(df).sort_values(by='score', ascending=False)
+        print(score_df.head(10).to_string())
+        save_data_to_mysql(score_df, f"social_score_{year}")
+
+
+
+api_net_social_score()
