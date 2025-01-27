@@ -10,3 +10,6 @@ G.add_edge(3, 4, weight=2)
 # 调用 Louvain 算法
 result = algorithms.louvain(G, 'weight')
 print(result)
+# 测试结果说明：
+# AttributeError: 'str' object has no attribute 'communities'
+# 环境兼容有问题，conda环境evol和py310不能直接兼容，需要单独做处理

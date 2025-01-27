@@ -72,11 +72,24 @@ def process_dict_pkl(x):
     print("-" * 50)
 
 
-# 子函数：处理其他文件（如 social_positions.pkl）
-def process_social_positions_pkl(x):
-    # TODO: Implement the logic for processing social_positions.pkl once the structure is understood
-    print("Processing social_positions.pkl - Add custom processing logic here")
-    print(x)  # 临时输出，后续可以补充处理逻辑
+def process_social_position_pkl(social_positions):
+    """
+    加载并输出 social_positions.pkl 文件中的数据
+    """
+    print(f"数据类型: {type(social_positions)}")
+    
+    # 输出每个快照的社交位置分数，限制显示前 5 个节点
+    for idx, snapshot_scores in enumerate(social_positions):
+        print(f"\n快照 {idx + 1} 的社交位置分数：")
+        
+        # 获取前 5 个节点的社交位置分数
+        top_5 = list(snapshot_scores.items())[:5]
+        
+        # 只输出前 5 个节点
+        for node, score in top_5:
+            print(f"  Node {node}: {score}")
+    
+    print("-" * 50)
 
 
 # 主函数：加载并处理 pkl 文件
@@ -92,15 +105,14 @@ def load_and_process_pkl(file_path):
     if 'communities.pkl' in file_path:
         process_communities_pkl(x)
     elif 'social_positions.pkl' in file_path:
-        process_social_positions_pkl(x)
+        process_social_position_pkl(x)
     elif isinstance(x, dict):
         process_dict_pkl(x)
     else:
         print(f"未定义的文件类型: {file_path} 中的数据类型 {type(x)}")
 
 # 处理具体的文件
-load_and_process_pkl('data/snapshots.pkl')  # 暂时空着，待后续处理
+# load_and_process_pkl('data/snapshots.pkl')  # 处理snapshots.pkl
 # load_and_process_pkl('data/communities.pkl')  # 加载并处理 communities.pkl
 
-# 对于其他文件，比如 social_positions.pkl，处理时使用类似的逻辑
-# load_and_process_pkl('data/social_positions.pkl')  # 暂时空着，待后续处理
+load_and_process_pkl('data/social_positions.pkl')
