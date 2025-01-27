@@ -2,6 +2,9 @@ import networkx as nx
 import pandas as pd
 import matplotlib.pyplot as plt
 
+import pickle
+import pandas as pd
+
 from mysql_config import load_data_from_mysql, save_data_to_mysql
 
 
@@ -42,6 +45,29 @@ def social_position(df):
     return result_df
 
 
+def social_scores_to_pkl():
+    """处理社交分数数据，并保存为pkl格式"""
+    social_scores = []
+    
+    # 遍历每一年的数据，从2005到2020年
+    for year in range(2005, 2021):
+        print(f"正在处理 {year}...")
+        # 从数据库读取每年社交分数的数据
+        df = load_data_from_mysql(f"social_score_{year}")
+        
+        # 将DataFrame转换为字典形式，'node'列作为键，'score'列作为值
+        year_data = dict(zip(df['node'], df['score']))
+        
+        # 将转换后的数据添加到列表中
+        social_scores.append(year_data)
+    
+    # 将结果保存为pkl文件
+    with open('data_pb/pb_social_positions.pkl', 'wb') as f:
+        pickle.dump(social_scores, f)
+
+    print("Data has been saved to pb_social_positions.pkl.")
+
+
 def api_net_social_score():
     """API网络中节点的社交分数(pagerank算法)"""
     for year in range(2005, 2021):
@@ -53,4 +79,5 @@ def api_net_social_score():
 
 
 
-api_net_social_score()
+# api_net_social_score()
+social_scores_to_pkl()

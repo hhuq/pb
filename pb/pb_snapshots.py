@@ -75,7 +75,7 @@ def process_data(pkl=None):
 
     # 将快照和时间戳封装成字典并保存为 pkl 文件
     snapshots_dict = {"snapshots": snapshots, "timestamps": timestamps}
-    pickle.dump(snapshots_dict, open("data/pb_snapshots.pkl", "wb"))
+    pickle.dump(snapshots_dict, open("data_pb/pb_snapshots.pkl", "wb"))
     print("pb_snapshots.pkl 已保存。")
 
     return snapshots_dict  # 返回字典格式

@@ -104,7 +104,7 @@ def load_and_process_pkl(file_path):
     # 根据文件名选择不同的处理方式
     if 'communities.pkl' in file_path:
         process_communities_pkl(x)
-    elif 'social_positions.pkl' in file_path:
+    elif 'pb_social_positions.pkl' in file_path:
         process_social_position_pkl(x)
     elif isinstance(x, dict):
         process_dict_pkl(x)
@@ -115,4 +115,4 @@ def load_and_process_pkl(file_path):
 # load_and_process_pkl('data/snapshots.pkl')  # 处理snapshots.pkl
 # load_and_process_pkl('data/communities.pkl')  # 加载并处理 communities.pkl
 
-load_and_process_pkl('data/social_positions.pkl')
+load_and_process_pkl('data_pb/pb_social_positions.pkl')
